@@ -7,6 +7,7 @@ import application.ewallet.domain.enums.constants.WalletMessages;
 import application.ewallet.domain.exceptions.WalletException;
 import application.ewallet.domain.models.WalletIdentity;
 
+import application.ewallet.domain.validations.WalletValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class WalletService implements CreateWalletUseCase {
     }
 
     private WalletIdentity createWallet(WalletIdentity walletIdentity) throws WalletException {
+        WalletValidator.validateUserId(walletIdentity.getUserId());
         Optional<WalletIdentity> foundWallet = walletManagerOutputPort.getWalletByUserId(walletIdentity.getUserId());
         if (foundWallet.isPresent() && WalletStatus.ACTIVE.equals(foundWallet.get().getWalletStatus())) {
             throw new WalletException(WalletMessages.WALLET_ALREADY_EXISTS.getMessage());
