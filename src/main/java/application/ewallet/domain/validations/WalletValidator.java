@@ -11,7 +11,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 public class WalletValidator {
 
     public static void validateUserEmail(String email) throws WalletException {
-        if (isEmptyString(email) || !EmailValidator.getInstance().isValid(email)) {
+        if (StringUtils.isEmpty(email) || !EmailValidator.getInstance().isValid(email)) {
             throw new WalletException(WalletMessages.INVALID_EMAIL_ADDRESS.getMessage());
         }
     }
@@ -49,7 +49,8 @@ public class WalletValidator {
     }
 
     public static void validateDataElement(String element) throws IdentityException {
-        if(isEmptyString(element)){
+        String trimmedDataElement = element != null ? element.trim() : StringUtils.EMPTY;
+        if(isEmptyString(trimmedDataElement)){
             throw new IdentityException(WalletMessages.INVALID_INPUT.getMessage());
         }
     }

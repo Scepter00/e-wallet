@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Setter
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserIdentity {
@@ -22,6 +23,8 @@ public class UserIdentity {
     private String password;
     private String createdAt;
     private String createdBy;
+    private String nin;
+    private String imageUrl;
     private String accessToken;
     private String refreshToken;
 }

@@ -15,6 +15,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -28,12 +30,15 @@ class KeycloakAdapterTest {
 
     @BeforeEach
     void setUp() {
-        userIdentity = new UserIdentity();
-        userIdentity.setFirstName("John");
-        userIdentity.setLastName("Johnson");
-        userIdentity.setEmail("john@gmail.com");
-        userIdentity.setPassword("password@123");
-        userIdentity.setUserRole(UserRole.CUSTOMER);
+
+        userIdentity = UserIdentity.builder()
+                .firstName("John")
+                .lastName("Johnson")
+                .email("john@gmail.com")
+                .password("password@123")
+                .userRole(UserRole.CUSTOMER)
+                .createdAt(LocalDateTime.now().toString())
+                .build();
     }
 
     UserIdentity createJohn() throws WalletException {
@@ -48,9 +53,9 @@ class KeycloakAdapterTest {
         assertEquals(userIdentity.getFirstName(), userIdentity.getFirstName());
         assertEquals(userIdentity.getLastName(), userIdentity.getLastName());
         assertEquals(userIdentity.getEmail(), userIdentity.getEmail());
-        UserIdentity will = identityManagerOutputPort.findUser(userIdentity);
-        assertNotNull( will);
-        assertEquals(userIdentity.getId(),will.getId());
+        UserIdentity ebuka = identityManagerOutputPort.findUser(userIdentity);
+        assertNotNull( ebuka);
+        assertEquals(userIdentity.getId(),ebuka.getId());
 
     }
 
@@ -62,10 +67,11 @@ class KeycloakAdapterTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {StringUtils.EMPTY,StringUtils.SPACE})
-    void createUserWithEmptyFirstname(String firstname){
+    void createUserWithEmptyFirstname(String firstname) {
         userIdentity.setFirstName(firstname);
         assertThrows(WalletException.class, ()-> identityManagerOutputPort.createUser(userIdentity));
     }
+
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {StringUtils.SPACE,StringUtils.EMPTY})
@@ -99,11 +105,11 @@ class KeycloakAdapterTest {
 
     @Test
     void findUser() throws WalletException {
-        UserIdentity will = createJohn();
-        UserIdentity userIdentity = identityManagerOutputPort.findUser(will);
+        UserIdentity ebuka = createJohn();
+        UserIdentity userIdentity = identityManagerOutputPort.findUser(ebuka);
         assertNotNull(userIdentity);
         assertNotNull(userIdentity.getId());
-        assertEquals(will.getId(),userIdentity.getId());
+        assertEquals(ebuka.getId(),userIdentity.getId());
     }
 
     @ParameterizedTest

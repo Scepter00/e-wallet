@@ -77,14 +77,13 @@ public class KeycloakAdapter implements IdentityManagerOutputPort {
         return roleRepresentation;
     }
 
-    @Override
-    public UserRepresentation getUserRepresentation(UserIdentity userIdentity, Boolean exactMatch) throws WalletException {
+    private UserRepresentation getUserRepresentation(UserIdentity userIdentity) throws WalletException {
         validateUserIdentity(userIdentity);
-        WalletValidator.validateEmail(userIdentity.getEmail());
+        WalletValidator.validateDataElement(userIdentity.getEmail());
         return keycloak
                 .realm(KEYCLOAK_REALM)
                 .users()
-                .search(userIdentity.getEmail(), exactMatch)
+                .searchByEmail(userIdentity.getEmail(), Boolean.TRUE)
                 .stream().findFirst().orElseThrow(()-> new IdentityException(USER_NOT_FOUND.getMessage()));
     }
 
@@ -104,7 +103,7 @@ private void createUserRepresentation(UserRepresentation userRepresentation, Use
         if (response.getStatusInfo().equals(Response.Status.CONFLICT)) {
             throw new IdentityException(USER_IDENTITY_ALREADY_EXISTS.getMessage());
         }
-        UserRepresentation createdUserRepresentation = getUserRepresentation(userIdentity, Boolean.TRUE);
+        UserRepresentation createdUserRepresentation = getUserRepresentation(userIdentity);
         userIdentity.setId(createdUserRepresentation.getId());
         assignRole(userIdentity);
     } catch (NotFoundException | WalletException exception) {
@@ -133,7 +132,7 @@ private void createUserRepresentation(UserRepresentation userRepresentation, Use
 
     @Override
     public UserIdentity findUser(UserIdentity userIdentity) throws WalletException {
-        UserRepresentation foundUser = getUserRepresentation(userIdentity, Boolean.TRUE);
+        UserRepresentation foundUser = getUserRepresentation(userIdentity);
         return keycloakMapper.mapUserRepresentationToUserIdentity(foundUser);
     }
 
@@ -159,7 +158,7 @@ private void createUserRepresentation(UserRepresentation userRepresentation, Use
 
     private Keycloak getKeycloak(UserIdentity userIdentity) {
         String email = userIdentity.getEmail().toLowerCase().trim();
-        String password = userIdentity.getPassword();
+        String password = userIdentity.getPassword().trim();
         return KeycloakBuilder.builder()
                 .grantType(OAuth2Constants.PASSWORD)
                 .realm(KEYCLOAK_REALM)

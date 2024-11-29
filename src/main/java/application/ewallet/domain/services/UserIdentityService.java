@@ -7,6 +7,7 @@ import application.ewallet.application.output.Identity.UserIdentityOutputPort;
 import application.ewallet.domain.exceptions.WalletException;
 import application.ewallet.domain.models.UserIdentity;
 import application.ewallet.domain.models.WalletIdentity;
+import application.ewallet.domain.validations.WalletValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class UserIdentityService implements CreateUserUseCase {
 
     @Override
     public void deleteUser(UserIdentity userIdentity) throws WalletException {
+        WalletValidator.validateUserId(userIdentity.getId());
         UserIdentity foundUser = findUser(userIdentity);
         identityManagerOutPutPort.deleteUser(foundUser);
         userIdentityOutputPort.deleteUserById(foundUser.getId());

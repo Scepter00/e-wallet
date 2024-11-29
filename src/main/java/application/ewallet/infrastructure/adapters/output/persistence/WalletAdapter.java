@@ -22,7 +22,7 @@ public class WalletAdapter implements WalletManagerOutputPort {
     @Override
     public WalletIdentity save(WalletIdentity walletIdentity) throws WalletException {
         WalletValidator.validateUserId(walletIdentity.getUserId());
-        //WalletValidator.validateWalletId(walletIdentity.getId());
+        WalletValidator.validateWalletId(walletIdentity.getId());
         boolean foundWallet = walletRepository.findByUserId(walletIdentity.getUserId()).isPresent();
         if(foundWallet){
             throw new WalletException(WalletMessages.WALLET_ALREADY_EXIST.getMessage());

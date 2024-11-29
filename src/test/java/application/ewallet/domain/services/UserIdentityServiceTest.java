@@ -64,13 +64,6 @@ class UserIdentityServiceTest {
         assertEquals(userIdentity.getLastName(), savedUser.getLastName());
     }
 
-    @Test
-    void deleteUser() throws WalletException {
-        when(userIdentityOutputPort.findById(userIdentity.getId())).thenReturn(userIdentity);
-        userIdentityService.deleteUser(userIdentity);
-        verify(identityManagerOutPutPort).deleteUser(userIdentity);
-        verify(userIdentityOutputPort).deleteUserById(userIdentity.getId());
-    }
 
     @Test
     void signUpWithNullUser() {
@@ -113,5 +106,27 @@ class UserIdentityServiceTest {
     void signUpWithNullUserRole() {
         userIdentity.setUserRole(null);
         assertThrows(Exception.class, () -> userIdentityService.signup(userIdentity));
+    }
+
+    @Test
+    void deleteUser() throws WalletException {
+        when(userIdentityOutputPort.findById(userIdentity.getId())).thenReturn(userIdentity);
+        userIdentityService.deleteUser(userIdentity);
+        verify(identityManagerOutPutPort).deleteUser(userIdentity);
+        verify(userIdentityOutputPort).deleteUserById(userIdentity.getId());
+    }
+
+    @Test
+    void deleteUserWithNullRole() {
+        userIdentity.setUserRole(null);
+        assertThrows(Exception.class, () -> userIdentityService.deleteUser(userIdentity));
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
+    void deleteUserWithInvalidId(String id) {
+        userIdentity.setId(id);
+        assertThrows(Exception.class, () -> userIdentityService.deleteUser(userIdentity));
     }
 }
