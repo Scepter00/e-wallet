@@ -50,6 +50,4 @@ public class IdentityManagerController {
                 .statusCode(HttpStatus.OK.name())
                 .build());
     }
-
-
 }
