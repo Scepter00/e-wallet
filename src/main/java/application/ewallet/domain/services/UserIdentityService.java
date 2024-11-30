@@ -42,6 +42,7 @@ public class UserIdentityService implements CreateUserUseCase {
     @Override
     public void deleteUser(UserIdentity userIdentity) throws WalletException {
         WalletValidator.validateUserId(userIdentity.getId());
+        WalletValidator.validateDataElement(userIdentity.getEmail());
         UserIdentity foundUser = findUser(userIdentity);
         identityManagerOutPutPort.deleteUser(foundUser);
         userIdentityOutputPort.deleteUserById(foundUser.getId());
@@ -52,5 +53,11 @@ public class UserIdentityService implements CreateUserUseCase {
         identityManagerOutPutPort.findUser(userIdentity);
         userIdentityOutputPort.findById(userIdentity.getId());
         return userIdentity;
+    }
+
+    @Override
+    public UserIdentity findUserById(String userId) throws WalletException {
+        WalletValidator.validateDataElement(userId);
+        return userIdentityOutputPort.findById(userId);
     }
 }

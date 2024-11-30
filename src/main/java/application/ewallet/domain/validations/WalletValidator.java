@@ -1,5 +1,6 @@
 package application.ewallet.domain.validations;
 
+import application.ewallet.domain.enums.UserRole;
 import application.ewallet.domain.enums.constants.WalletMessages;
 import application.ewallet.domain.exceptions.IdentityException;
 import application.ewallet.domain.exceptions.WalletException;

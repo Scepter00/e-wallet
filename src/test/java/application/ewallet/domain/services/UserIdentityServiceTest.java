@@ -45,6 +45,7 @@ class UserIdentityServiceTest {
     @BeforeEach
     void setUp() {
         userIdentity = new UserIdentity();
+        userIdentity.setId("4224a5ca-780b-413c-8cf4-85125d6ce7d8");
         userIdentity.setFirstName("John");
         userIdentity.setLastName("Johnson");
         userIdentity.setEmail("sam@gmail.com");
@@ -59,6 +60,7 @@ class UserIdentityServiceTest {
         when(userIdentityOutputPort.save(any(UserIdentity.class))).thenReturn(userIdentity);
         UserIdentity savedUser = userIdentityService.signup(userIdentity);
         assertNotNull(savedUser);
+        assertEquals(userIdentity.getId(), savedUser.getId());
         assertEquals(userIdentity.getEmail(), savedUser.getEmail());
         assertEquals(userIdentity.getFirstName(), savedUser.getFirstName());
         assertEquals(userIdentity.getLastName(), savedUser.getLastName());
@@ -116,9 +118,11 @@ class UserIdentityServiceTest {
         verify(userIdentityOutputPort).deleteUserById(userIdentity.getId());
     }
 
-    @Test
-    void deleteUserWithNullRole() {
-        userIdentity.setUserRole(null);
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
+    void deleteUserWithInvalidEmail(String email) {
+        userIdentity.setEmail(email);
         assertThrows(Exception.class, () -> userIdentityService.deleteUser(userIdentity));
     }
 

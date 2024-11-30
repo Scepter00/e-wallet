@@ -4,16 +4,15 @@ import application.ewallet.domain.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserIdentityRequest {
+
     @NotBlank(message = "First name is required")
     private String firstName;
 
@@ -21,6 +20,7 @@ public class UserIdentityRequest {
     private String lastName;
 
     @Email(message = "Email is required")
+    @NotBlank(message = "Email cannot be null, empty, or contain only spaces")
     private String email;
 
     @NotNull(message = "Role is required")

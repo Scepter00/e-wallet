@@ -50,6 +50,7 @@ class KeycloakAdapterTest {
         UserIdentity userIdentity = createJohn();
         assertNotNull(userIdentity);
         assertNotNull(userIdentity.getId());
+        log.info("User Identity ==========================================================> {}", userIdentity.getId());
         assertEquals(userIdentity.getFirstName(), userIdentity.getFirstName());
         assertEquals(userIdentity.getLastName(), userIdentity.getLastName());
         assertEquals(userIdentity.getEmail(), userIdentity.getEmail());
