@@ -161,15 +161,4 @@ class IdentityManagerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.lastName", CoreMatchers.is(userIdentity.getLastName())));
     }
 
-//    @ParameterizedTest
-//    @NullSource
-//    @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
-//    void findUserByIdWithInvalidId(String id) throws Exception {
-//        ResultActions response = mockMvc.perform(get("/api/v1/search/user/" + id));
-//
-//        response.andExpect(MockMvcResultMatchers.status().isBadRequest());
-//        log.info("Response: ==============> {}", response.andReturn().getResponse().getContentAsString());
-//    }
-
-
 }
