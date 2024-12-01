@@ -160,4 +160,42 @@ class IdentityManagerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.firstName", CoreMatchers.is(userIdentity.getFirstName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.lastName", CoreMatchers.is(userIdentity.getLastName())));
     }
+
+    @Test
+    void login() throws Exception {
+        given(createUserUseCase.login(ArgumentMatchers.any())).willReturn(userIdentity);
+        ResultActions response = mockMvc.perform(post("/api/v1/login/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userIdentityRequest)));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.email", CoreMatchers.is(userIdentity.getEmail())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.firstName", CoreMatchers.is(userIdentity.getFirstName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.lastName", CoreMatchers.is(userIdentity.getLastName())));
+        log.info("Response: ============> {}", response.andReturn().getResponse().getContentAsString());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
+    void loginWithInvalidEmail(String email) throws Exception {
+        userIdentityRequest.setEmail(email);
+        ResultActions response = mockMvc.perform(post("/api/v1/login/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userIdentityRequest)));
+
+        response.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
+    void loginWithInvalidPassword(String password) throws Exception {
+        userIdentityRequest.setPassword(password);
+        ResultActions response = mockMvc.perform(post("/api/v1/login/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userIdentityRequest)));
+
+        response.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }

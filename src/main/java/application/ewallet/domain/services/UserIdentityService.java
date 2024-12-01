@@ -60,4 +60,11 @@ public class UserIdentityService implements CreateUserUseCase {
         WalletValidator.validateDataElement(userId);
         return userIdentityOutputPort.findById(userId);
     }
+
+    @Override
+    public UserIdentity login(UserIdentity userIdentity) throws WalletException {
+        WalletValidator.validateDataElement(userIdentity.getEmail());
+        WalletValidator.validateDataElement(userIdentity.getPassword());
+        return identityManagerOutPutPort.login(userIdentity);
+    }
 }

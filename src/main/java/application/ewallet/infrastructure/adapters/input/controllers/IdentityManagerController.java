@@ -50,4 +50,15 @@ public class IdentityManagerController {
                 .statusCode(HttpStatus.OK.name())
                 .build());
     }
+
+    @PostMapping("login/")
+    public ResponseEntity<ApiResponse<?>> login(@RequestBody @Valid UserIdentityRequest userIdentityRequest) throws WalletException {
+        UserIdentity userIdentity = identityMapper.mapUserIdentityRequestToUserIdentity(userIdentityRequest);
+        userIdentity = createUserUseCase.login(userIdentity);
+        return ResponseEntity.ok(ApiResponse.<UserIdentity>builder()
+                .data(userIdentity)
+                .message(RESPONSE_IS_SUCCESSFUL.getMessage())
+                .statusCode(HttpStatus.OK.name())
+                .build());
+    }
 }

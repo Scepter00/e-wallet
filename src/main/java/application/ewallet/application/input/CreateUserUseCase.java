@@ -12,5 +12,7 @@ public interface CreateUserUseCase {
 
     UserIdentity findUserById(String userId) throws WalletException;
 
+    UserIdentity login(UserIdentity userIdentity) throws WalletException;
+
     void deleteUser(UserIdentity userIdentity) throws WalletException;
 }
