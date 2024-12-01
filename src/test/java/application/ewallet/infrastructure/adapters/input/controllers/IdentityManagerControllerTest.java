@@ -160,5 +160,4 @@ class IdentityManagerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.firstName", CoreMatchers.is(userIdentity.getFirstName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.lastName", CoreMatchers.is(userIdentity.getLastName())));
     }
-
 }
