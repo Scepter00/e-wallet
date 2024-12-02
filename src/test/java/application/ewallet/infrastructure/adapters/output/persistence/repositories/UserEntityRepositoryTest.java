@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,5 +52,13 @@ class UserEntityRepositoryTest {
 
         assertNotNull(userEntity);
         log.info("User found:============> {}", userEntity);
+    }
+
+    @Test
+    void deleteUser() {
+        userEntityRepository.delete(userEntity);
+
+        assertNotNull(userEntity);
+        log.info("User deleted: ===========> {}", userEntity);
     }
 }
