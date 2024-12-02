@@ -24,7 +24,5 @@ public class TransactionAdapter implements TransactionManagerOutputPort {
         TransactionEntity transactionEntity = transactionMapper.mapToTransactionEntity(transactionIdentity);
         transactionEntity = transactionRepository.save(transactionEntity);
         return transactionMapper.mapToTransactionIdentity(transactionEntity);
-
-
-}
+    }
 }
