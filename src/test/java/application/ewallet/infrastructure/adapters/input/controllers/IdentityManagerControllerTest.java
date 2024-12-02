@@ -198,4 +198,22 @@ class IdentityManagerControllerTest {
 
         response.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @Test
+    void deleteUser() throws Exception {
+        ResultActions response = mockMvc.perform(delete("/api/v1/delete/3dc5ab57-1da0-4567-82fa-073cc05af4ce"));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk());
+        log.info("Deleted user: ============> {}", response.andReturn().getResponse().getContentAsString());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
+    void deleteUserWithInvalidId(String id) throws Exception {
+        userIdentityRequest.setId(id);
+        ResultActions response = mockMvc.perform(delete("/api/v1/delete/3dc5ab57-1da0-4567-82fa-073cc05af4ce"));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }

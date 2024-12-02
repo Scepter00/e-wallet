@@ -13,6 +13,8 @@ import lombok.*;
 @NoArgsConstructor
 public class UserIdentityRequest {
 
+    private String id;
+
     @NotBlank(message = "First name is required")
     private String firstName;
 

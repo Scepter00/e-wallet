@@ -9,13 +9,11 @@ import application.ewallet.infrastructure.adapters.input.mappers.IdentityMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static application.ewallet.infrastructure.enums.ControllerConstants.RESPONSE_IS_SUCCESSFUL;
-import static application.ewallet.infrastructure.enums.ControllerConstants.USER_ID_IS_REQUIRED;
 
 @Slf4j
 @RestController
@@ -57,6 +55,16 @@ public class IdentityManagerController {
         userIdentity = createUserUseCase.login(userIdentity);
         return ResponseEntity.ok(ApiResponse.<UserIdentity>builder()
                 .data(userIdentity)
+                .message(RESPONSE_IS_SUCCESSFUL.getMessage())
+                .statusCode(HttpStatus.OK.name())
+                .build());
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable String id) throws WalletException {
+        UserIdentity userIdentity = UserIdentity.builder().id(id).build();
+        createUserUseCase.deleteUser(userIdentity);
+        return ResponseEntity.ok(ApiResponse.builder()
                 .message(RESPONSE_IS_SUCCESSFUL.getMessage())
                 .statusCode(HttpStatus.OK.name())
                 .build());

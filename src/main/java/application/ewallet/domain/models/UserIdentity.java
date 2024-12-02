@@ -1,6 +1,7 @@
 package application.ewallet.domain.models;
 
 import application.ewallet.domain.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
@@ -21,6 +22,7 @@ public class UserIdentity {
     private boolean enabled;
     private boolean emailVerified;
     private String password;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private String createdAt;
     private String createdBy;
     private String nin;
