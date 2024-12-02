@@ -1,15 +1,10 @@
 package application.ewallet.infrastructure.adapters.output.persistence.repositories;
 
 import application.ewallet.domain.enums.UserRole;
-import application.ewallet.domain.exceptions.WalletException;
 import application.ewallet.infrastructure.adapters.output.persistence.entities.UserEntity;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.TestPropertySource;
@@ -55,6 +50,6 @@ class UserEntityRepositoryTest {
         userEntity = userEntityRepository.findById(userEntity.getId()).get();
 
         assertNotNull(userEntity);
-        log.info("User found:============> " + userEntity);
+        log.info("User found:============> {}", userEntity);
     }
 }
