@@ -50,6 +50,8 @@ public class UserIdentityService implements CreateUserUseCase {
 
     @Override
     public UserIdentity findUser(UserIdentity userIdentity) throws WalletException {
+        WalletValidator.validateDataElement(userIdentity.getId());
+        WalletValidator.validateUserId(userIdentity.getId());
         identityManagerOutPutPort.findUser(userIdentity);
         userIdentityOutputPort.findById(userIdentity.getId());
         return userIdentity;
@@ -58,6 +60,7 @@ public class UserIdentityService implements CreateUserUseCase {
     @Override
     public UserIdentity findUserById(String userId) throws WalletException {
         WalletValidator.validateDataElement(userId);
+        WalletValidator.validateUserId(userId);
         return userIdentityOutputPort.findById(userId);
     }
 

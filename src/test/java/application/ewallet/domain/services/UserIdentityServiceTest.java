@@ -48,7 +48,7 @@ class UserIdentityServiceTest {
         userIdentity.setId("4224a5ca-780b-413c-8cf4-85125d6ce7d8");
         userIdentity.setFirstName("John");
         userIdentity.setLastName("Johnson");
-        userIdentity.setEmail("sam@gmail.com");
+        userIdentity.setEmail("john@gmail.com");
         userIdentity.setUserRole(UserRole.CUSTOMER);
         userIdentity.setPassword("password@123");
     }
@@ -108,6 +108,53 @@ class UserIdentityServiceTest {
     void signUpWithNullUserRole() {
         userIdentity.setUserRole(null);
         assertThrows(Exception.class, () -> userIdentityService.signup(userIdentity));
+    }
+
+    @Test
+    void findUser() throws WalletException {
+        when(identityManagerOutPutPort.findUser(userIdentity)).thenReturn(userIdentity);
+        when(userIdentityOutputPort.findById(userIdentity.getId())).thenReturn(userIdentity);
+        UserIdentity foundUser = userIdentityService.findUser(userIdentity);
+        assertNotNull(foundUser);
+        assertEquals(userIdentity.getId(), foundUser.getId());
+        assertEquals(userIdentity.getEmail(), foundUser.getEmail());
+        assertEquals(userIdentity.getFirstName(), foundUser.getFirstName());
+        assertEquals(userIdentity.getLastName(), foundUser.getLastName());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
+    void findUserWithInvalidEmail(String id) {
+        userIdentity.setId(id);
+        assertThrows(Exception.class, () -> userIdentityService.findUser(userIdentity));
+    }
+
+    @Test
+    void login() throws WalletException {
+        when(identityManagerOutPutPort.login(userIdentity)).thenReturn(userIdentity);
+        UserIdentity loggedInUser = userIdentityService.login(userIdentity);
+        assertNotNull(loggedInUser);
+        assertEquals(userIdentity.getId(), loggedInUser.getId());
+        assertEquals(userIdentity.getEmail(), loggedInUser.getEmail());
+        assertEquals(userIdentity.getFirstName(), loggedInUser.getFirstName());
+        assertEquals(userIdentity.getLastName(), loggedInUser.getLastName());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
+    void loginWithInvalidEmail(String email) {
+        userIdentity.setEmail(email);
+        assertThrows(Exception.class, () -> userIdentityService.login(userIdentity));
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
+    void loginWithInvalidPassword(String password) {
+        userIdentity.setPassword(password);
+        assertThrows(Exception.class, () -> userIdentityService.login(userIdentity));
     }
 
     @Test
