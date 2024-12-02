@@ -23,7 +23,6 @@ public class UserEntity {
     private boolean emailVerified;
     private String password;
     private String createdAt;
-    private String createdBy;
     @DocumentReference
     private WalletEntity walletEntity;
 }
