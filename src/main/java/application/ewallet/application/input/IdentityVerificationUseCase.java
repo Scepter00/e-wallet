@@ -5,5 +5,5 @@ import application.ewallet.infrastructure.adapters.input.data.responses.premblyR
 
 public interface IdentityVerificationUseCase {
 
-    PremblyResponse verifyNinIdentity(IdentityVerification identityVerification);
+    PremblyResponse verifyIdentity(IdentityVerification identityVerification);
 }

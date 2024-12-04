@@ -4,6 +4,7 @@ import application.ewallet.domain.enums.UserRole;
 import application.ewallet.domain.enums.constants.WalletMessages;
 import application.ewallet.domain.exceptions.IdentityException;
 import application.ewallet.domain.exceptions.WalletException;
+import application.ewallet.domain.models.IdentityVerification;
 import application.ewallet.domain.models.UserIdentity;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -60,5 +61,14 @@ public class WalletValidator {
         if (ObjectUtils.isEmpty(instance)){
             throw new WalletException(WalletMessages.INVALID_OBJECT.getMessage());
         }
+    }
+
+    public static void validateIdentityVerificationRequest(IdentityVerification identityVerification) throws IdentityException {
+        if(identityVerification == null){
+            throw new IdentityException(WalletMessages.IDENTITY_SHOULD_NOT_BE_NULL.getMessage());
+        }
+        validateDataElement(identityVerification.getNin());
+        validateDataElement(identityVerification.getIdentityImage());
+
     }
 }

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +26,7 @@ class TransactionAdapterTest {
     private TransactionIdentity transactionIdentity;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         transactionIdentity =
                 TransactionIdentity.builder().amount(new BigDecimal("100"))
                         .transactionType(TransactionType.DEPOSIT)
@@ -34,22 +35,11 @@ class TransactionAdapterTest {
     }
 
     @Test
-    void saveTransaction() {
-        try {
+    void saveTransaction() throws IdentityException {
             TransactionIdentity transactionIdentity1 = transactionManagerOutputPort.save(transactionIdentity);
             assertNotNull(transactionIdentity);
             log.info("Transaction ----> {}", transactionIdentity);
             assertEquals(transactionIdentity1.getAmount(), transactionIdentity.getAmount());
-        } catch (IdentityException exception) {
-            exception.printStackTrace();
-            fail(exception.getCause());
-        }
-    }
-
-    @Test
-    void testAmountCannotBeNull() {
-        transactionIdentity.setAmount(null);
-        assertThrows(IdentityException.class, () -> transactionManagerOutputPort.save(transactionIdentity));
     }
 
     @Test
@@ -59,6 +49,7 @@ class TransactionAdapterTest {
     }
 
     @ParameterizedTest
+    @NullSource
     @ValueSource(strings = {"-1.0", "-0.01"})
     void testAmountCannotBeNegative(String amount) {
         transactionIdentity.setAmount(new BigDecimal(amount));
@@ -66,6 +57,7 @@ class TransactionAdapterTest {
     }
 
     @ParameterizedTest
+    @NullSource
     @ValueSource(strings = {StringUtils.EMPTY,StringUtils.SPACE})
     void validateUserId(String walletId) {
         transactionIdentity.setWalletId(walletId);

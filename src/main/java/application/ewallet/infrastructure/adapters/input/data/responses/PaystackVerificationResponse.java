@@ -5,13 +5,14 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
 @ToString
 public class PaystackVerificationResponse {
     private boolean status;
     private String message;
     private PaystackData data;
+
 
     @Getter
     @Setter

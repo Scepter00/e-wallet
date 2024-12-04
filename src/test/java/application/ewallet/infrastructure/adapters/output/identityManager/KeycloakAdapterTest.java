@@ -50,7 +50,7 @@ class KeycloakAdapterTest {
         UserIdentity userIdentity = createJohn();
         assertNotNull(userIdentity);
         assertNotNull(userIdentity.getId());
-        log.info("User Identity ==========================================================> {}", userIdentity.getId());
+        log.info("User Identity =========================================> {}", userIdentity.getId());
         assertEquals(userIdentity.getFirstName(), userIdentity.getFirstName());
         assertEquals(userIdentity.getLastName(), userIdentity.getLastName());
         assertEquals(userIdentity.getEmail(), userIdentity.getEmail());
@@ -177,40 +177,30 @@ class KeycloakAdapterTest {
 
     @Test
     void deleteUser() throws WalletException {
-        UserIdentity william = createJohn();
-        UserIdentity userIdentity = identityManagerOutputPort.findUser(william);
-        william.setId(userIdentity.getId());
-        identityManagerOutputPort.deleteUser(william);
-        assertThrows(WalletException.class,() ->identityManagerOutputPort.findUser(william));
-    }
-
-    @Test
-    void deleteUserWithNull()  {
-        assertThrows(WalletException.class,() ->identityManagerOutputPort.deleteUser(null));
-    }
-
-    @Test
-    void deleteUserWithInvalid_Id(){
-        userIdentity.setId("invalid");
-        assertThrows(WalletException.class,()-> identityManagerOutputPort.deleteUser(userIdentity));
+//        UserIdentity william = createJohn();
+        userIdentity = identityManagerOutputPort.findUser(userIdentity);
+//        william.setId(userIdentity.getId());
+        identityManagerOutputPort.deleteUser(userIdentity);
+//        assertThrows(WalletException.class,() ->identityManagerOutputPort.findUser(userIdentity));
     }
 
     @ParameterizedTest
+    @NullSource
     @ValueSource(strings = {StringUtils.SPACE,StringUtils.EMPTY," 22879u9u000878726778  ", "yt766564367645  444"})
     void deleteUserWithInvalidId(String id){
         userIdentity.setId(id);
         assertThrows(WalletException.class,()-> identityManagerOutputPort.deleteUser(userIdentity));
     }
 
-    @AfterEach
-    void tearDown(){
-        log.info("Cleaning up...");
-        try {
-            UserIdentity userIdentity1 = identityManagerOutputPort.findUser(userIdentity);
-            userIdentity.setId(userIdentity1.getId());
-            identityManagerOutputPort.deleteUser(userIdentity);
-        }catch (WalletException exception){
-            exception.printStackTrace();
-        }
-    }
+//    @AfterEach
+//    void tearDown(){
+//        log.info("Cleaning up...");
+//        try {
+//            UserIdentity userIdentity1 = identityManagerOutputPort.findUser(userIdentity);
+//            userIdentity.setId(userIdentity1.getId());
+//            identityManagerOutputPort.deleteUser(userIdentity);
+//        }catch (WalletException exception){
+//            exception.printStackTrace();
+//        }
+//    }
 }

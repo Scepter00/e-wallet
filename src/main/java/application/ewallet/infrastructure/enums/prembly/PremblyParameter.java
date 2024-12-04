@@ -6,10 +6,12 @@ public enum PremblyParameter {
     API_KEY("x-api-key"),
     ACCEPT("accept"),
     BVN_NUMBER("number"),
-    NIN_NUMBER("number"),
+    NIN("number_nin"),
+    NUMBER("number"),
     APPLICATION_JSON("application/json"),
     NIN_FACE_URL("/nin_w_face"),
-    NIN_IMAGE("image");
+    IMAGE("image"),
+    NIN_LIVENESS_URL("/biometrics/face/liveliness_check");
 
     private final String value;
     PremblyParameter(String value) {

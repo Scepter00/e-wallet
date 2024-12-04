@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class IdentityVerificationService implements IdentityVerificationUseCase {
 
     @Override
-    public PremblyResponse verifyNinIdentity(IdentityVerification identityVerification) {
+    public PremblyResponse verifyIdentity(IdentityVerification identityVerification) {
         return null;
     }
 }

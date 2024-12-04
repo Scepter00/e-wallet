@@ -8,15 +8,16 @@ import lombok.*;
 public class PaystackResponse {
     private boolean status;
     private String message;
-    private PaystackResponse data;
+    private PaystackResponses data;
 
 
     @Setter
     @Getter
-    @ToString
-    @NoArgsConstructor
     @AllArgsConstructor
-    public static class PayStackResponses {
+    @NoArgsConstructor
+    @lombok.ToString
+
+    public static class PaystackResponses{
         private String authorization_url;
         private String access_code;
         private String reference;

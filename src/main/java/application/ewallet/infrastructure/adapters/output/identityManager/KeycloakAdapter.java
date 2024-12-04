@@ -88,8 +88,8 @@ public class KeycloakAdapter implements IdentityManagerOutputPort {
     }
 
     public UserResource getUserResource(UserIdentity userIdentity) throws WalletException {
-        validateUserIdentityDetails(userIdentity);
-        WalletValidator.validateDataInput(userIdentity);
+        WalletValidator.validateObjectInstance(userIdentity);
+        WalletValidator.validateDataElement(userIdentity.getId());
         return keycloak
                 .realm(KEYCLOAK_REALM)
                 .users()

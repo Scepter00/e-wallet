@@ -1,13 +1,16 @@
 package application.ewallet.infrastructure.adapters.output.identityVerificationManager;
 
 import application.ewallet.application.output.Identity.IdentityVerificationOutputPort;
+import application.ewallet.domain.enums.constants.WalletMessages;
+import application.ewallet.domain.exceptions.IdentityException;
 import application.ewallet.domain.models.IdentityVerification;
-import application.ewallet.infrastructure.adapters.output.data.response.PremblyResponse;
+import application.ewallet.domain.validations.WalletValidator;
+import application.ewallet.infrastructure.adapters.input.data.responses.premblyResponse.PremblyLivelinessResponse;
+import application.ewallet.infrastructure.adapters.input.data.responses.premblyResponse.PremblyNinResponse;
+import application.ewallet.infrastructure.adapters.input.data.responses.premblyResponse.PremblyResponse;
 import application.ewallet.infrastructure.enums.prembly.PremblyParameter;
-import application.ewallet.infrastructure.exceptions.InfrastructureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -16,7 +19,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import static application.ewallet.domain.enums.constants.WalletMessages.CREDENTIALS_SHOULD_NOT_BE_EMPTY;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -32,34 +36,89 @@ public class PremblyAdapter implements IdentityVerificationOutputPort {
     @Value("${PREMBLY_APP_KEY}")
     private String apiKey;
 
+    private final RestTemplate restTemplate;
+
+
 
     @Override
-    public PremblyResponse verifyIdentity(IdentityVerification identityVerification) throws InfrastructureException {
-        return getNinDetails(identityVerification);
+    public PremblyResponse verifyIdentity(IdentityVerification identityVerification) throws IdentityException {
+        WalletValidator.validateIdentityVerificationRequest(identityVerification);
+        if (identityVerification.getNin() != null) {
+            return (identityVerification.getIdentityImage() != null)
+                    ? verifyNinLikeness(identityVerification)
+                    : verifyNin(identityVerification);
+        }
+        throw new IdentityException("Either NIN or BVN must be provided.");
     }
 
-    public PremblyResponse getNinDetails(IdentityVerification verificationRequest) throws InfrastructureException {
-        validateIdentityVerificationRequest(verificationRequest);
-        ResponseEntity<PremblyResponse> responseEntity = getIdentityDetailsByNin(verificationRequest);
-        log.info("Verification Result1: {}", responseEntity.getBody());
+
+    @Override
+    public PremblyResponse verifyNin(IdentityVerification identityVerification) throws IdentityException {
+        validateInput(identityVerification);
+        String url = premblyUrl.concat(PremblyParameter.NIN_URL.getValue());
+        HttpHeaders httpHeaders = getHttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put(PremblyParameter.NIN.getValue(), identityVerification.getNin());
+        HttpEntity<Map<String, String>> requestHttpEntity = new HttpEntity<>(requestBody, httpHeaders);
+        ResponseEntity<PremblyNinResponse> responseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestHttpEntity,
+                PremblyNinResponse.class
+        );
+
         return responseEntity.getBody();
     }
 
-    private ResponseEntity<PremblyResponse> getIdentityDetailsByNin(IdentityVerification verificationRequest) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = getHttpHeaders();
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add(PremblyParameter.NIN_NUMBER.getValue(), verificationRequest.getNin());
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(formData, headers);
-        String url = premblyUrl.concat(PremblyParameter.NIN_URL.getValue());
+    @Override
+    public PremblyResponse verifyNinLikeness(IdentityVerification identityVerification) throws IdentityException {
+        return getNinDetails(identityVerification);
+    }
+
+    @Override
+    public PremblyResponse verifyLiveliness(IdentityVerification identityVerification) {
+        String url = premblyUrl.concat(PremblyParameter.NIN_LIVENESS_URL.getValue());
+        HttpHeaders httpHeaders = getHttpHeaders();
+        HttpEntity<IdentityVerification> requestHttpEntity = new HttpEntity<>(identityVerification, httpHeaders);
+        ResponseEntity<PremblyLivelinessResponse> responseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestHttpEntity,
+                PremblyLivelinessResponse.class
+        );
+        return responseEntity.getBody();
+    }
+
+    public PremblyResponse getNinDetails(IdentityVerification identityVerification) throws IdentityException {
+        PremblyResponse premblyResponse = getIdentityDetailsByNin(identityVerification);
+        premblyResponse.getVerification().updateValidIdentity();
+        log.info("Response: {}", premblyResponse);
+        return premblyResponse;
+    }
+
+    private PremblyResponse getIdentityDetailsByNin(IdentityVerification identityVerification) {
+        HttpEntity<MultiValueMap<String, String>> entity = createRequestEntity(identityVerification);
+        String url = premblyUrl.concat(PremblyParameter.NIN_FACE_URL.getValue());
         log.info(url);
-        ResponseEntity<PremblyResponse> responseEntity = ResponseEntity.ofNullable(PremblyResponse.builder().build());
+        ResponseEntity<PremblyNinResponse> responseEntity = ResponseEntity.ofNullable(PremblyNinResponse.builder().build());
+        log.info("Response {}",responseEntity.getBody());
         try {
-            responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, PremblyResponse.class);
+            responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, PremblyNinResponse.class);
         } catch (HttpServerErrorException ex) {
             log.info("Prembly server error {}", ex.getMessage());
+            log.error("Prembly Server error {}", ex.getMessage());
         }
-        return responseEntity;
+        return responseEntity.getBody();
+    }
+
+    private HttpEntity<MultiValueMap<String, String>> createRequestEntity(IdentityVerification verificationRequest) {
+        HttpHeaders headers = getHttpHeaders();
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add(PremblyParameter.NUMBER.getValue(), verificationRequest.getNin());
+        formData.add(PremblyParameter.IMAGE.getValue(), verificationRequest.getIdentityImage());
+        log.debug("Prepared form data: {}", formData);
+        return new HttpEntity<>(formData, headers);
     }
 
     private HttpHeaders getHttpHeaders() {
@@ -71,10 +130,16 @@ public class PremblyAdapter implements IdentityVerificationOutputPort {
         return headers;
     }
 
-    private void validateIdentityVerificationRequest(IdentityVerification identityVerification) throws InfrastructureException {
-        if (identityVerification == null || StringUtils.isEmpty(identityVerification.getNin()) || StringUtils.isEmpty(identityVerification.getIdentityImage()))
-            throw new InfrastructureException(CREDENTIALS_SHOULD_NOT_BE_EMPTY.getMessage());
-        if (identityVerification.getNin().length() != 11)
-            throw new InfrastructureException("Invalid NIN");
+    public void validateInput(IdentityVerification identityVerification) throws IdentityException {
+        validateIdentityVerification(identityVerification);
+        if (identityVerification.getIdentityImage() != null) {
+            throw new IdentityException(WalletMessages.ONLY_IDENTITY_NUMBER.getMessage());
+        }
     }
+
+        public void validateIdentityVerification(IdentityVerification identityVerification) throws IdentityException {
+            if(identityVerification == null){
+                throw new IdentityException(WalletMessages.IDENTITY_SHOULD_NOT_BE_NULL.getMessage());
+            }
+        }
 }

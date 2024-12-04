@@ -1,6 +1,5 @@
 package application.ewallet.infrastructure.adapters.input.data.responses.premblyResponse;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
@@ -14,13 +13,15 @@ public class Verification {
 
     @JsonProperty("status")
     private String status;
-    private boolean validNin;
+
+    private boolean validIdentity;
+
     @JsonProperty("reference")
     private String reference;
 
-    public void updateValidNin() {
+    public void updateValidIdentity() {
         if (StringUtils.equalsIgnoreCase("VERIFIED", this.status)) {
-            validNin = Boolean.TRUE;
+            validIdentity = Boolean.TRUE;
         }
     }
 }

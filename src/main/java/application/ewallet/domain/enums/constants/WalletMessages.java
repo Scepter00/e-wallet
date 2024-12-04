@@ -16,7 +16,10 @@ public enum WalletMessages {
     INVALID_EMAIL("Invalid email"),
     INVALID_PASSWORD_OR_PASSWORD("Invalid email or password"),
     EMAIL_HAS_BEEN_USED("Email has been used"),
-    WALLET_ALREADY_EXIST("Already exist");
+    WALLET_ALREADY_EXIST("Already exist"),
+    IDENTITY_SHOULD_NOT_BE_NULL("Field cannot be null or empty"),
+    EMPTY_INPUT_FIELD_ERROR("Field cannot be null or empty"),
+    ONLY_IDENTITY_NUMBER("only Identity number is require");
 
     private final String message;
 
