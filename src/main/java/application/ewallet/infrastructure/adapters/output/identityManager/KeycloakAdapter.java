@@ -116,7 +116,7 @@ private void createUserRepresentation(UserRepresentation userRepresentation, Use
         WalletValidator.validateDataElement(userIdentity.getEmail());
         WalletValidator.validateDataElement(userIdentity.getPassword());
         UserIdentity user = findUser(userIdentity);
-        log.info("Attempting login for user: ==========================> {}, {}", userIdentity.getEmail(), userIdentity.getPassword());
+        log.info("Attempting login for user: =========> {}, {}", userIdentity.getEmail(), userIdentity.getPassword());
         try {
             Keycloak keycloakClient = getKeycloak(userIdentity);
             TokenManager tokenManager = keycloakClient.tokenManager();

@@ -177,11 +177,11 @@ class KeycloakAdapterTest {
 
     @Test
     void deleteUser() throws WalletException {
-//        UserIdentity william = createJohn();
+        UserIdentity william = createJohn();
         userIdentity = identityManagerOutputPort.findUser(userIdentity);
-//        william.setId(userIdentity.getId());
+        william.setId(userIdentity.getId());
         identityManagerOutputPort.deleteUser(userIdentity);
-//        assertThrows(WalletException.class,() ->identityManagerOutputPort.findUser(userIdentity));
+        assertThrows(WalletException.class,() ->identityManagerOutputPort.findUser(userIdentity));
     }
 
     @ParameterizedTest
