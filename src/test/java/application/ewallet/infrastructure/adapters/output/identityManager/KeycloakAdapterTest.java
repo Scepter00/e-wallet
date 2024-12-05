@@ -192,15 +192,15 @@ class KeycloakAdapterTest {
         assertThrows(WalletException.class,()-> identityManagerOutputPort.deleteUser(userIdentity));
     }
 
-//    @AfterEach
-//    void tearDown(){
-//        log.info("Cleaning up...");
-//        try {
-//            UserIdentity userIdentity1 = identityManagerOutputPort.findUser(userIdentity);
-//            userIdentity.setId(userIdentity1.getId());
-//            identityManagerOutputPort.deleteUser(userIdentity);
-//        }catch (WalletException exception){
-//            exception.printStackTrace();
-//        }
-//    }
+    @AfterEach
+    void tearDown(){
+        log.info("Cleaning up...");
+        try {
+            UserIdentity userIdentity1 = identityManagerOutputPort.findUser(userIdentity);
+            userIdentity.setId(userIdentity1.getId());
+            identityManagerOutputPort.deleteUser(userIdentity);
+        }catch (WalletException exception){
+            exception.printStackTrace();
+        }
+    }
 }
