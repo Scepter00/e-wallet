@@ -43,6 +43,7 @@ public class UserIdentityService implements CreateUserUseCase {
     public void deleteUser(UserIdentity userIdentity) throws WalletException {
         WalletValidator.validateUserId(userIdentity.getId());
         WalletValidator.validateDataElement(userIdentity.getId());
+        WalletValidator.validateEmail(userIdentity.getEmail());
         UserIdentity foundUser = findUser(userIdentity);
         identityManagerOutPutPort.deleteUser(foundUser);
         userIdentityOutputPort.deleteUserById(foundUser.getId());

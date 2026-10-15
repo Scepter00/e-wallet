@@ -40,11 +40,13 @@ class UserIdentityServiceTest {
     private CreateWalletUseCase createWalletUseCase;
 
     private UserIdentity userIdentity;
+    private UserIdentity userIdentity2;
 
 
     @BeforeEach
     void setUp() {
         userIdentity = new UserIdentity();
+        userIdentity2 = new UserIdentity();
         userIdentity.setId("4224a5ca-780b-413c-8cf4-85125d6ce7d8");
         userIdentity.setFirstName("John");
         userIdentity.setLastName("Johnson");
